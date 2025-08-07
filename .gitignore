@@ -1,0 +1,23 @@
+# Build artifacts
+secret_share
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go test binary
+go.test.bin
+
+# Coverage output
+*.cover
+*.out
+
+# IDE files
+.vscode/
+.idea/
+
+# macOS files
+.DS_Store
