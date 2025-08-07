@@ -6,11 +6,11 @@ build:
 
 # Run tests
 test:
-	go test -v ./core
+	go test -v ./...
 
 # Run tests with coverage
 test-coverage:
-	go test -cover ./core
+	go test -cover ./...
 
 # Install the application
 install:
