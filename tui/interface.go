@@ -141,149 +141,42 @@ func extractTagContent(input, tag string) string {
 	// Trim whitespace from the entire input
 	input = strings.TrimSpace(input)
 
-	// If we couldn't find properly formatted tags, check if the entire input is just the content
-	// This handles the case where user excludes XML blocks entirely
+	// Create properly formatted tags
+	openTag := fmt.Sprintf("<%s>", tag)
+	closeTag := fmt.Sprintf("</%s>", tag)
+
+	// First, check if we have content without any tags (plain content)
 	if !strings.Contains(input, "<") && !strings.Contains(input, ">") {
 		return input
 	}
 
-	// Handle properly formatted tags first
-	openTag := fmt.Sprintf("<%s>", tag)
-	closeTag := fmt.Sprintf("</%s>", tag)
+	// First, attempt to find the end tag. If found, remove it and the content after it.
+	endIdx := strings.Index(input, closeTag)
+	if endIdx == -1 {
+		// If end tag was not found, find the first '</' and remove it and content after it.
+		closeTagStart := "</"
+		closeTagIdx := strings.Index(input, closeTagStart)
+		if closeTagIdx != -1 {
+			input = input[:closeTagIdx]
+		}
+	} else {
+		input = input[:endIdx]
+	}
 
+	// Then, attempt to find the start tag. If found, remove it and the content before it.
 	startIdx := strings.Index(input, openTag)
-	if startIdx != -1 {
-		startIdx += len(openTag)
-		endIdx := strings.Index(input[startIdx:], closeTag)
-		if endIdx != -1 {
-			endIdx += startIdx
-			return strings.TrimSpace(input[startIdx:endIdx])
+	if startIdx == -1 {
+		// If start tag was not found, find the first '>' and remove it and content before it.
+		gtIdx := strings.Index(input, ">")
+		if gtIdx != -1 {
+			input = input[gtIdx+1:]
 		}
+	} else {
+		input = input[startIdx+len(openTag):]
 	}
 
-	// Handle various malformed tag scenarios
-	// We'll try to find the content by looking for tag variations
-
-	// Try to find opening tag variations
-	openTagVariations := []string{
-		fmt.Sprintf("<%s>", tag),
-		fmt.Sprintf("<%s", tag), // Missing closing >
-		fmt.Sprintf("%s>", tag), // Missing opening <
-		fmt.Sprintf("%s", tag),  // Missing opening < and closing >
-	}
-
-	// Try to find closing tag variations
-	closeTagVariations := []string{
-		fmt.Sprintf("</%s>", tag),
-		fmt.Sprintf("</%s", tag), // Missing closing >
-		fmt.Sprintf("<%s", tag),  // Missing / and closing >
-		fmt.Sprintf("/%s>", tag), // Missing opening <
-		fmt.Sprintf("/%s", tag),  // Missing opening < and closing >
-	}
-
-	// Also try variations with the trimmed prefix
-	trimmedPrefix := strings.TrimPrefix(tag, "secret_share_")
-	openTagVariations = append(openTagVariations,
-		fmt.Sprintf("<%s>", trimmedPrefix),
-		fmt.Sprintf("<%s", trimmedPrefix), // Missing closing >
-		fmt.Sprintf("%s>", trimmedPrefix), // Missing opening <
-		fmt.Sprintf("%s", trimmedPrefix),  // Missing opening < and closing >
-	)
-
-	closeTagVariations = append(closeTagVariations,
-		fmt.Sprintf("</%s>", trimmedPrefix),
-		fmt.Sprintf("</%s", trimmedPrefix), // Missing closing >
-		fmt.Sprintf("<%s", trimmedPrefix),  // Missing / and closing >
-		fmt.Sprintf("/%s>", trimmedPrefix), // Missing opening <
-		fmt.Sprintf("/%s", trimmedPrefix),  // Missing opening < and closing >
-	)
-
-	// Try all combinations of opening and closing tag variations
-	for _, openTagVar := range openTagVariations {
-		openIdx := strings.Index(input, openTagVar)
-		if openIdx == -1 {
-			continue
-		}
-
-		openIdx += len(openTagVar)
-
-		for _, closeTagVar := range closeTagVariations {
-			closeIdx := strings.Index(input, closeTagVar)
-			if closeIdx == -1 || closeIdx <= openIdx {
-				continue
-			}
-
-			// Extract content between the tags
-			content := input[openIdx:closeIdx]
-			return strings.TrimSpace(content)
-		}
-	}
-
-	// Special handling for specific test cases
-	// Handle Test 10: "<secret_share_key>TEST_KEY_CONTENT/secret_share_key>"
-	if tag == "secret_share_key" && strings.Contains(input, "<secret_share_key>") && strings.Contains(input, "/secret_share_key>") {
-		parts := strings.Split(input, "<secret_share_key>")
-		if len(parts) > 1 {
-			content := strings.Split(parts[1], "/secret_share_key>")[0]
-			return strings.TrimSpace(content)
-		}
-	}
-
-	// Handle Test 11: "secret_share_keyTEST_KEY_CONTENT/secret_share_key"
-	// This is a case where both tags are missing all brackets
-	if strings.Contains(input, tag) && strings.Contains(input, "/"+tag) {
-		// Split by the tag to isolate the content
-		parts := strings.Split(input, tag)
-		if len(parts) >= 3 {
-			// The content is in the second part, before the "/"
-			content := strings.Split(parts[1], "/")[0]
-			return strings.TrimSpace(content)
-		}
-	}
-
-	// Handle Test 18: "cret_share_key>TEST_KEY_CONTENT</secret_share_key>"
-	// This is a case where the opening tag is missing the opening '<' character
-	if tag == "secret_share_key" && strings.Contains(input, "cret_share_key>") && strings.Contains(input, "</secret_share_key>") {
-		parts := strings.Split(input, "cret_share_key>")
-		if len(parts) > 1 {
-			content := strings.Split(parts[1], "</secret_share_key>")[0]
-			return strings.TrimSpace(content)
-		}
-	}
-
-	// Handle Test 20: "cret_share_key>TEST_KEY_CONTENT</secret_share_sec"
-	// This is a case where both the opening tag is missing the opening '<' character
-	// and the closing tag is missing the closing '>' character
-	if tag == "secret_share_key" && strings.Contains(input, "cret_share_key>") && strings.Contains(input, "</secret_share_sec") {
-		parts := strings.Split(input, "cret_share_key>")
-		if len(parts) > 1 {
-			content := strings.Split(parts[1], "</secret_share_sec")[0]
-			return strings.TrimSpace(content)
-		}
-	}
-
-	// Handle Test 21: "<secret_share>TEST_KEY_CONTENT</secret_share_key>"
-	// This is a case where the opening tag is missing part of the key identifier
-	if tag == "secret_share_key" && strings.Contains(input, "<secret_share>") && strings.Contains(input, "</secret_share_key>") {
-		parts := strings.Split(input, "<secret_share>")
-		if len(parts) > 1 {
-			content := strings.Split(parts[1], "</secret_share_key>")[0]
-			return strings.TrimSpace(content)
-		}
-	}
-
-	// Handle Test 22: "<secret_share_key>TEST_KEY_CONTENT</secret_share>"
-	// This is a case where the closing tag is missing part of the key identifier
-	if tag == "secret_share_key" && strings.Contains(input, "<secret_share_key>") && strings.Contains(input, "</secret_share>") {
-		parts := strings.Split(input, "<secret_share_key>")
-		if len(parts) > 1 {
-			content := strings.Split(parts[1], "</secret_share>")[0]
-			return strings.TrimSpace(content)
-		}
-	}
-
-	// Return empty string if we couldn't extract content
-	return ""
+	// Return whatever string is left
+	return strings.TrimSpace(input)
 }
 
 // FormatPublicKey formats a public key with XML-like tags for sharing
