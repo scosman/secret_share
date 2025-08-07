@@ -5,24 +5,100 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"syscall"
+
+	"golang.org/x/term"
 )
 
+// ANSI color codes
+const (
+	Reset  = "\033[0m"
+	Red    = "\033[31m"
+	Green  = "\033[32m"
+	Blue   = "\033[34m"
+	Yellow = "\033[33m"
+	Purple = "\033[35m"
+	Cyan   = "\033[36m"
+	White  = "\033[37m"
+	Bold   = "\033[1m"
+)
+
+// Styled text functions
+func headerText(text string) string {
+	return Bold + Cyan + text + Reset
+}
+
+func promptText(text string) string {
+	return Green + "❯ " + text + Reset
+}
+
+func errorText(text string) string {
+	return Red + "✖ Error: " + text + Reset
+}
+
+func successText(text string) string {
+	return Green + "✔ " + text + Reset
+}
+
+func infoText(text string) string {
+	return Yellow + "ℹ " + text + Reset
+}
+
 // PromptUser displays a prompt and waits for user input
+// Adds proper spacing and styling
 func PromptUser(prompt string) string {
-	fmt.Print(prompt)
+	fmt.Println()
+	fmt.Print(promptText(prompt))
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	return scanner.Text()
 }
 
-// PrintMessage displays a message to the user
+// PromptSecret displays a prompt and waits for user input, masking the characters
+// Adds proper spacing and styling
+func PromptSecret(prompt string) string {
+	fmt.Println()
+	fmt.Print(promptText(prompt))
+
+	// Read password (masked input)
+	bytes, err := term.ReadPassword(int(syscall.Stdin))
+	fmt.Println() // Add a newline after the masked input
+
+	if err != nil {
+		return ""
+	}
+
+	return string(bytes)
+}
+
+// PrintMessage displays a message to the user with better formatting
 func PrintMessage(message string) {
+	fmt.Println()
 	fmt.Println(message)
 }
 
-// PrintError displays an error message to the user
+// PrintHeader displays a header message with styling
+func PrintHeader(message string) {
+	fmt.Println()
+	fmt.Println(headerText(message))
+}
+
+// PrintError displays an error message to the user with better formatting and colors
 func PrintError(message string) {
-	fmt.Printf("Error: %s\n", message)
+	fmt.Println()
+	fmt.Println(errorText(message))
+}
+
+// PrintSuccess displays a success message to the user with better formatting and colors
+func PrintSuccess(message string) {
+	fmt.Println()
+	fmt.Println(successText(message))
+}
+
+// PrintInfo displays an info message to the user with better formatting and colors
+func PrintInfo(message string) {
+	fmt.Println()
+	fmt.Println(infoText(message))
 }
 
 // IsQuit checks if the user input is a quit command
