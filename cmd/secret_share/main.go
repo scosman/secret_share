@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rsa"
 	"encoding/base64"
 	"fmt"
 	"os"
@@ -90,36 +91,30 @@ func handleReceiver() {
 	}
 
 	// Get encrypted secret from sender with retry logic
-	var secretStr string
+	var decryptedSecret []byte
 	for {
-		input := tui.PromptUser("Send the key above to the person who wants to share a secret with you. When they reply back with the encrypted sercret, enter it here: ")
+		input := tui.PromptUser("Send the key above to the person who wants to share a secret with you. When they reply back with the encrypted secret, enter it here: ")
 		if tui.IsQuit(input) {
 			tui.PrintMessage("Shutting down SecretShare...")
 			return
 		}
 
 		// Extract secret from tags
-		secretStr = tui.ExtractSecret(input)
-		if secretStr == "" {
-			tui.PrintError("Could not extract secret from input. Please make sure it's properly formatted.")
-			tui.PrintMessage("Ensure you are pasting the exact secret key from the sender. It should be a string wrapped in tags like '<secret_share_secret>'.")
+		secretStr := tui.ExtractSecret(input)
+		// Decode base64 secret
+		encryptedSecret, err := base64.StdEncoding.DecodeString(secretStr)
+		// Decrypt the secret
+		if err == nil {
+			decryptedSecret, err = session.DecryptSecret(encryptedSecret)
+		}
+
+		if err != nil || secretStr == "" {
+			tui.PrintError("Could not extract secret from input.")
+			tui.PrintMessage("Ensure you are pasting the exact encrypted secret from the sender. It should be a string wrapped in tags like '<secret_share_secret>'.")
 			continue
 		}
+
 		break
-	}
-
-	// Decode base64 secret
-	encryptedSecret, err := base64.StdEncoding.DecodeString(secretStr)
-	if err != nil {
-		tui.PrintError("Invalid base64 encoding in secret.")
-		return
-	}
-
-	// Decrypt the secret
-	decryptedSecret, err := session.DecryptSecret(encryptedSecret)
-	if err != nil {
-		tui.PrintError(fmt.Sprintf("Failed to decrypt secret: %v", err))
-		return
 	}
 
 	// Display the decrypted secret
@@ -128,7 +123,7 @@ func handleReceiver() {
 
 func handleSender() {
 	// Get receiver's public key with retry logic
-	var publicKeyStr string
+	var receiverPublicKey *rsa.PublicKey
 	for {
 		input := tui.PromptUser("Enter the secret key from the other person. It should be a string wrapped in <secret_share_key> tags: ")
 		if tui.IsQuit(input) {
@@ -137,27 +132,21 @@ func handleSender() {
 		}
 
 		// Extract public key from tags
-		publicKeyStr = tui.ExtractPublicKey(input)
-		if publicKeyStr == "" {
-			tui.PrintError("Could not extract public key from input. Please make sure it's properly formatted. It should be a string wrapped in '<secret_share_key>' tags.")
-			tui.PrintMessage("If you're having trouble, try copying and pasting the entire message from the receiver")
+		publicKeyStr := tui.ExtractPublicKey(input)
+		// Decode base64 public key
+		publicKeyBytes, err := base64.StdEncoding.DecodeString(publicKeyStr)
+		// Parse public key
+		if err == nil {
+			receiverPublicKey, err = core.BytesToPublicKey(publicKeyBytes)
+		}
+
+		if err != nil || publicKeyStr == "" {
+			tui.PrintError("Could not extract public key from input.")
+			tui.PrintMessage("Ensure you are pasting the exact secret key from the sender. It should be a string wrapped in tags like '<secret_share_key>'.")
 			continue
 		}
+
 		break
-	}
-
-	// Decode base64 public key
-	publicKeyBytes, err := base64.StdEncoding.DecodeString(publicKeyStr)
-	if err != nil {
-		tui.PrintError("Invalid base64 encoding in public key.")
-		return
-	}
-
-	// Parse public key
-	receiverPublicKey, err := core.BytesToPublicKey(publicKeyBytes)
-	if err != nil {
-		tui.PrintError(fmt.Sprintf("Failed to parse public key: %v", err))
-		return
 	}
 
 	// Create sender session
