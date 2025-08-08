@@ -43,6 +43,7 @@ func GenerateNonce() ([]byte, error) {
 // 1. Generates a random AES-256 key
 // 2. Encrypts the AES key with RSA-OAEP
 // 3. Encrypts the data with AES-GCM
+// 4. Prepends "ssv1" format version identifier
 func HybridEncrypt(publicKey *rsa.PublicKey, data []byte) ([]byte, error) {
 	// Generate a random symmetric key
 	symmetricKey, err := GenerateSymmetricKey()
@@ -77,33 +78,54 @@ func HybridEncrypt(publicKey *rsa.PublicKey, data []byte) ([]byte, error) {
 	// Encrypt data
 	ciphertext := gcm.Seal(nil, nonce, data, nil)
 
-	// Combine encrypted key length, encrypted key, nonce, and ciphertext
-	// Format: [keyLen][encryptedKey][nonce][ciphertext]
+	// Combine format version, encrypted key length, encrypted key, nonce, and ciphertext
+	// Format: [ssv1][keyLen][encryptedKey][nonce][ciphertext]
 	keyLen := len(encryptedKey)
-	result := make([]byte, 4+len(encryptedKey)+len(nonce)+len(ciphertext))
+	result := make([]byte, 4+4+len(encryptedKey)+len(nonce)+len(ciphertext)) // 4 bytes for "ssv1" + 4 bytes for keyLen + data
+
+	// Store format version "ssv1"
+	copy(result[0:4], []byte("ssv1"))
 
 	// Store key length as 4 bytes
-	result[0] = byte(keyLen >> 24)
-	result[1] = byte(keyLen >> 16)
-	result[2] = byte(keyLen >> 8)
-	result[3] = byte(keyLen)
+	result[4] = byte(keyLen >> 24)
+	result[5] = byte(keyLen >> 16)
+	result[6] = byte(keyLen >> 8)
+	result[7] = byte(keyLen)
 
 	// Copy encrypted key
-	copy(result[4:4+keyLen], encryptedKey)
+	copy(result[8:8+keyLen], encryptedKey)
 
 	// Copy nonce
-	copy(result[4+keyLen:4+keyLen+len(nonce)], nonce)
+	copy(result[8+keyLen:8+keyLen+len(nonce)], nonce)
 
 	// Copy ciphertext
-	copy(result[4+keyLen+len(nonce):], ciphertext)
+	copy(result[8+keyLen+len(nonce):], ciphertext)
 
 	return result, nil
 }
 
 // HybridDecrypt decrypts data using hybrid encryption:
-// 1. Decrypts the AES key with RSA-OAEP
-// 2. Decrypts the data with AES-GCM
+// 1. Checks for format version prefix
+// 2. Decrypts the AES key with RSA-OAEP
+// 3. Decrypts the data with AES-GCM
 func HybridDecrypt(privateKey *rsa.PrivateKey, encryptedData []byte) ([]byte, error) {
+	if len(encryptedData) < 4 {
+		return nil, fmt.Errorf("invalid encrypted data format")
+	}
+
+	// Check format version
+	versionPrefix := encryptedData[0:4]
+	if string(versionPrefix) == "ssv1" {
+		// Valid format version, proceed with decryption (skip the 4-byte prefix)
+		encryptedData = encryptedData[4:]
+	} else if len(encryptedData) >= 3 && string(encryptedData[0:3]) == "ssv" {
+		// Recognizable format but newer version
+		return nil, fmt.Errorf("this secret was sent using a newer version of SecureSend - please upgrade")
+	} else {
+		// Invalid format
+		return nil, fmt.Errorf("invalid encrypted data format")
+	}
+
 	if len(encryptedData) < 4 {
 		return nil, fmt.Errorf("invalid encrypted data format")
 	}

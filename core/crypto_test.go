@@ -70,6 +70,11 @@ func TestHybridEncryptDecrypt(t *testing.T) {
 		t.Error("Encrypted data should not be empty")
 	}
 
+	// Check that the encrypted data starts with "ssv1"
+	if len(encryptedData) < 4 || string(encryptedData[0:4]) != "ssv1" {
+		t.Error("Encrypted data should start with 'ssv1' format version")
+	}
+
 	// Decrypt
 	decryptedData, err := HybridDecrypt(privateKey, encryptedData)
 	if err != nil {
@@ -196,5 +201,80 @@ func TestReceiverSessionWithNilPrivateKey(t *testing.T) {
 	_, err := receiverSession.DecryptSecret([]byte("test"))
 	if err == nil {
 		t.Error("Expected error when decrypting with nil private key")
+	}
+}
+
+func TestHybridDecryptValidFormat(t *testing.T) {
+	// Generate key pair
+	privateKey, publicKey, err := GenerateKeyPair()
+	if err != nil {
+		t.Fatalf("Failed to generate key pair: %v", err)
+	}
+
+	// Test data
+	testData := []byte("This is a secret message for testing hybrid encryption")
+
+	// Encrypt data (which will add "ssv1" prefix)
+	encryptedData, err := HybridEncrypt(publicKey, testData)
+	if err != nil {
+		t.Fatalf("Failed to encrypt data: %v", err)
+	}
+
+	// Decrypt data
+	decryptedData, err := HybridDecrypt(privateKey, encryptedData)
+	if err != nil {
+		t.Fatalf("Failed to decrypt data with valid format: %v", err)
+	}
+
+	// Compare
+	if string(testData) != string(decryptedData) {
+		t.Errorf("Decrypted data does not match original. Expected: %s, Got: %s",
+			string(testData), string(decryptedData))
+	}
+}
+
+func TestHybridDecryptNewerVersion(t *testing.T) {
+	// Generate key pair
+	privateKey, _, err := GenerateKeyPair()
+	if err != nil {
+		t.Fatalf("Failed to generate key pair: %v", err)
+	}
+
+	// Create test data with "ssv" prefix but not "ssv1"
+	testData := []byte("ssv2some data that would normally be encrypted")
+
+	// Try to decrypt
+	_, err = HybridDecrypt(privateKey, testData)
+	if err == nil {
+		t.Error("Expected error when decrypting data with newer version")
+	}
+
+	// Check error message
+	expectedMsg := "this secret was sent using a newer version of SecureSend - please upgrade"
+	if err.Error() != expectedMsg {
+		t.Errorf("Expected error message '%s', got '%s'", expectedMsg, err.Error())
+	}
+}
+
+func TestHybridDecryptInvalidFormat(t *testing.T) {
+	// Generate key pair
+	privateKey, _, err := GenerateKeyPair()
+	if err != nil {
+		t.Fatalf("Failed to generate key pair: %v", err)
+	}
+
+	// Create test data with invalid format
+	testData := []byte("invalid format data")
+
+	// Try to decrypt
+	_, err = HybridDecrypt(privateKey, testData)
+	if err == nil {
+		t.Error("Expected error when decrypting data with invalid format")
+	}
+
+	// Check error message
+	expectedMsg := "invalid encrypted data format"
+	if err.Error() != expectedMsg {
+		t.Errorf("Expected error message '%s', got '%s'", expectedMsg, err.Error())
 	}
 }
