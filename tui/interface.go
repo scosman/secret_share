@@ -91,6 +91,14 @@ func PromptUserSingleChar(prompt string) string {
 		return ""
 	}
 
+	// Check for Ctrl+C interrupt (byte value 3)
+	if bytes[0] == 3 {
+		// Restore terminal state before exiting
+		term.Restore(int(syscall.Stdin), oldState)
+		// Exit gracefully
+		os.Exit(0)
+	}
+
 	// Convert to string and return
 	char := string(bytes)
 
