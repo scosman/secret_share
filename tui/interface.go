@@ -71,6 +71,36 @@ func PromptSecret(prompt string) string {
 	return string(bytes)
 }
 
+// PromptUserSingleChar displays a prompt and waits for a single character input
+// Adds proper spacing and styling
+func PromptUserSingleChar(prompt string) string {
+	fmt.Println()
+	fmt.Print(promptText(prompt))
+
+	// Put terminal in raw mode to read single character
+	oldState, err := term.MakeRaw(int(syscall.Stdin))
+	if err != nil {
+		return ""
+	}
+	defer term.Restore(int(syscall.Stdin), oldState)
+
+	// Read a single character
+	bytes := make([]byte, 1)
+	_, err = os.Stdin.Read(bytes)
+	if err != nil {
+		return ""
+	}
+
+	// Convert to string and return
+	char := string(bytes)
+
+	// Echo the character to the terminal since we read it directly
+	fmt.Print(char)
+	fmt.Println()
+
+	return char
+}
+
 // PrintMessage displays a message to the user with better formatting
 func PrintMessage(message string) {
 	fmt.Println()
@@ -138,67 +168,43 @@ func ExtractSecret(input string) string {
 
 // extractTagContent extracts content from XML-like tags with tolerance for formatting errors
 func extractTagContent(input, tag string) string {
-	// Normalize input by removing extra spaces
-	normalized := strings.ReplaceAll(input, " ", "")
+	// Trim whitespace from the entire input
+	input = strings.TrimSpace(input)
 
-	// Try to find the opening tag with more tolerance
+	// Create properly formatted tags
 	openTag := fmt.Sprintf("<%s>", tag)
-	startIdx := strings.Index(normalized, openTag)
-	if startIdx == -1 {
-		// Try variations with missing characters
-		startIdx = strings.Index(normalized, tag+">")
-		if startIdx == -1 {
-			startIdx = strings.Index(normalized, tag)
-			if startIdx == -1 {
-				return ""
-			}
-		}
-		// Adjust start index to after the tag
-		if strings.HasSuffix(normalized[:startIdx], "<") {
-			startIdx += len(tag) + 1 // +1 for >
-		} else {
-			startIdx += len(tag)
-			// Find the closing >
-			gtIdx := strings.Index(normalized[startIdx:], ">")
-			if gtIdx == -1 {
-				return ""
-			}
-			startIdx += gtIdx + 1
-		}
-	} else {
-		startIdx += len(openTag)
-	}
-
-	// Try to find the closing tag with more tolerance
 	closeTag := fmt.Sprintf("</%s>", tag)
-	endIdx := strings.Index(normalized[startIdx:], closeTag)
+
+	// First, check if we have content without any tags (plain content)
+	if !strings.Contains(input, "<") && !strings.Contains(input, ">") {
+		return input
+	}
+
+	// First, attempt to find the end tag. If found, remove it and the content after it.
+	endIdx := strings.Index(input, closeTag)
 	if endIdx == -1 {
-		// Try variations with missing characters
-		endIdx = strings.Index(normalized[startIdx:], "<"+tag)
-		if endIdx == -1 {
-			endIdx = strings.Index(normalized[startIdx:], "<")
-			if endIdx == -1 {
-				return normalized[startIdx:] // Return everything if no closing tag found
-			}
+		// If end tag was not found, find the first '</' and remove it and content after it.
+		closeTagStart := "</"
+		closeTagIdx := strings.Index(input, closeTagStart)
+		if closeTagIdx != -1 {
+			input = input[:closeTagIdx]
 		}
-		endIdx += startIdx
 	} else {
-		endIdx += startIdx
+		input = input[:endIdx]
 	}
 
-	if endIdx <= startIdx {
-		return normalized[startIdx:] // Return everything from start if no proper end
+	// Then, attempt to find the start tag. If found, remove it and the content before it.
+	startIdx := strings.Index(input, openTag)
+	if startIdx == -1 {
+		// If start tag was not found, find the first '>' and remove it and content before it.
+		gtIdx := strings.Index(input, ">")
+		if gtIdx != -1 {
+			input = input[gtIdx+1:]
+		}
+	} else {
+		input = input[startIdx+len(openTag):]
 	}
 
-	return normalized[startIdx:endIdx]
-}
-
-// FormatPublicKey formats a public key with XML-like tags for sharing
-func FormatPublicKey(key []byte) string {
-	return fmt.Sprintf("<secret_share_key>%s</secret_share_key>", string(key))
-}
-
-// FormatSecret formats an encrypted secret with XML-like tags for sharing
-func FormatSecret(secret []byte) string {
-	return fmt.Sprintf("<secret_share_secret>%s</secret_share_secret>", string(secret))
+	// Return whatever string is left
+	return strings.TrimSpace(input)
 }

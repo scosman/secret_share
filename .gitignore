@@ -1,5 +1,5 @@
 # Build artifacts
-secret_share
+/secret_share
 
 # Go build artifacts
 *.exe
