@@ -109,7 +109,6 @@ func PrintMessage(message string) {
 
 // PrintHeader displays a header message with styling
 func PrintHeader(message string) {
-	fmt.Println()
 	fmt.Println(headerText(message))
 }
 

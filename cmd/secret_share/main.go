@@ -48,14 +48,13 @@ func getUserRole() string {
 	for {
 		input := tui.PromptUserSingleChar("Are you [s]ending or [r]eceiving a secret? ")
 		if tui.IsQuit(input) {
-			tui.PrintMessage("Shutting down SecretShare...")
+			tui.PrintMessage("Quiting SecretShare")
 			return ""
 		}
 
 		role := tui.ParseRoleInput(input)
 		if role == "" {
-			tui.PrintError("Invalid input. Please enter 's' for sending or 'r' for receiving.")
-			tui.PrintMessage("You can quit by typing 'q'")
+			tui.PrintError("Invalid input. Please enter 's' for sending or 'r' for receiving (or 'q' to quit).")
 			continue
 		}
 
@@ -87,17 +86,13 @@ func handleReceiver() {
 	// Try to copy public key to clipboard
 	err = tui.SetClipboard(publicKeyFormatted)
 	if err == nil {
-		tui.PrintInfo("Copied to clipboard. Send this key to the person who wants to share a secret with you.")
-	} else {
-		tui.PrintInfo("You must send this key to the person who wants to share a secret with you.")
+		tui.PrintInfo("Copied to clipboard.")
 	}
-
-	tui.PrintMessage("")
 
 	// Get encrypted secret from sender with retry logic
 	var secretStr string
 	for {
-		input := tui.PromptUser("Enter the secret from the other person (can be just the secret or wrapped in <secret_share_secret> tags): ")
+		input := tui.PromptUser("Send the key above to the person who wants to share a secret with you. When they reply back with the encrypted sercret, enter it here: ")
 		if tui.IsQuit(input) {
 			tui.PrintMessage("Shutting down SecretShare...")
 			return
@@ -107,8 +102,7 @@ func handleReceiver() {
 		secretStr = tui.ExtractSecret(input)
 		if secretStr == "" {
 			tui.PrintError("Could not extract secret from input. Please make sure it's properly formatted.")
-			tui.PrintMessage("You can enter just the base64-encoded secret, or wrap it in tags like <secret_share_secret>YOUR_SECRET_HERE</secret_share_secret>")
-			tui.PrintMessage("If you're having trouble, try copying and pasting the entire message from the sender")
+			tui.PrintMessage("Ensure you are pasting the exact secret key from the sender. It should be a string wrapped in tags like '<secret_share_secret>'.")
 			continue
 		}
 		break
@@ -136,7 +130,7 @@ func handleSender() {
 	// Get receiver's public key with retry logic
 	var publicKeyStr string
 	for {
-		input := tui.PromptUser("Enter the secret key from the other person (can be just the key or wrapped in <secret_share_key> tags): ")
+		input := tui.PromptUser("Enter the secret key from the other person. It should be a string wrapped in <secret_share_key> tags: ")
 		if tui.IsQuit(input) {
 			tui.PrintMessage("Shutting down SecretShare...")
 			return
@@ -145,8 +139,7 @@ func handleSender() {
 		// Extract public key from tags
 		publicKeyStr = tui.ExtractPublicKey(input)
 		if publicKeyStr == "" {
-			tui.PrintError("Could not extract public key from input. Please make sure it's properly formatted.")
-			tui.PrintMessage("You can enter just the base64-encoded key, or wrap it in tags like <secret_share_key>YOUR_KEY_HERE</secret_share_key>")
+			tui.PrintError("Could not extract public key from input. Please make sure it's properly formatted. It should be a string wrapped in '<secret_share_key>' tags.")
 			tui.PrintMessage("If you're having trouble, try copying and pasting the entire message from the receiver")
 			continue
 		}
