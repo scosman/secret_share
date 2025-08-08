@@ -80,8 +80,18 @@ func handleReceiver() {
 
 	// Display public key for sharing
 	publicKeyStr := base64.StdEncoding.EncodeToString(publicKeyBytes)
-	tui.PrintInfo("Here's the public key to share with the person sending you the secret:")
-	tui.PrintMessage(tui.FormatPublicKey([]byte(publicKeyStr)))
+	publicKeyFormatted := tui.FormatPublicKey([]byte(publicKeyStr))
+	tui.PrintInfo("Here's a new the public key:")
+	tui.PrintMessage(publicKeyFormatted)
+
+	// Try to copy public key to clipboard
+	err = tui.SetClipboard(publicKeyFormatted)
+	if err == nil {
+		tui.PrintInfo("Copied to clipboard. Send this key to the person who wants to share a secret with you.")
+	} else {
+		tui.PrintInfo("You must send this key to the person who wants to share a secret with you.")
+	}
+
 	tui.PrintMessage("")
 
 	// Get encrypted secret from sender with retry logic
@@ -176,8 +186,17 @@ func handleSender() {
 
 	// Encode encrypted secret as base64
 	encryptedSecretStr := base64.StdEncoding.EncodeToString(encryptedSecret)
+	encryptedSecretFormatted := tui.FormatSecret([]byte(encryptedSecretStr))
 
 	// Display the encrypted secret for sharing
-	tui.PrintSuccess("Here's the secret you can send back. Only they can decrypt it and see the secret:")
-	tui.PrintMessage(tui.FormatSecret([]byte(encryptedSecretStr)))
+	tui.PrintSuccess("Here's the secret encrypted so only they can decrypt it:")
+	tui.PrintMessage(encryptedSecretFormatted)
+
+	// Try to copy encrypted secret to clipboard
+	err = tui.SetClipboard(encryptedSecretFormatted)
+	if err == nil {
+		tui.PrintInfo("Copied to clipboard. Send this secret back to the person who shared their key with you.")
+	} else {
+		tui.PrintInfo("Send this secret back to the person who shared their key with you.")
+	}
 }
