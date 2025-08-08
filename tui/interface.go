@@ -71,6 +71,36 @@ func PromptSecret(prompt string) string {
 	return string(bytes)
 }
 
+// PromptUserSingleChar displays a prompt and waits for a single character input
+// Adds proper spacing and styling
+func PromptUserSingleChar(prompt string) string {
+	fmt.Println()
+	fmt.Print(promptText(prompt))
+
+	// Put terminal in raw mode to read single character
+	oldState, err := term.MakeRaw(int(syscall.Stdin))
+	if err != nil {
+		return ""
+	}
+	defer term.Restore(int(syscall.Stdin), oldState)
+
+	// Read a single character
+	bytes := make([]byte, 1)
+	_, err = os.Stdin.Read(bytes)
+	if err != nil {
+		return ""
+	}
+
+	// Convert to string and return
+	char := string(bytes)
+
+	// Echo the character to the terminal since we read it directly
+	fmt.Print(char)
+	fmt.Println()
+
+	return char
+}
+
 // PrintMessage displays a message to the user with better formatting
 func PrintMessage(message string) {
 	fmt.Println()

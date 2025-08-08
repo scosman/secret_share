@@ -14,9 +14,8 @@ const TitleCard = `
            ▄▖        ▗ ▄▖▌       
            ▚ █▌▛▘▛▘█▌▜▘▚ ▛▌▀▌▛▘█▌
            ▄▌▙▖▙▖▌ ▙▖▐▖▄▌▌▌█▌▌ ▙▖
-       
-      Secure One Time Secret Sharing                                                      
-`
+  
+      Secure One Time Secret Sharing`
 
 func main() {
 	// Handle graceful shutdown
@@ -47,7 +46,7 @@ func main() {
 
 func getUserRole() string {
 	for {
-		input := tui.PromptUser("Are you [s]ending or [r]eceiving a secret? ")
+		input := tui.PromptUserSingleChar("Are you [s]ending or [r]eceiving a secret? ")
 		if tui.IsQuit(input) {
 			tui.PrintMessage("Shutting down SecretShare...")
 			return ""
