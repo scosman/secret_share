@@ -208,13 +208,3 @@ func extractTagContent(input, tag string) string {
 	// Return whatever string is left
 	return strings.TrimSpace(input)
 }
-
-// FormatPublicKey formats a public key with XML-like tags for sharing
-func FormatPublicKey(key []byte) string {
-	return fmt.Sprintf("<secret_share_key>%s</secret_share_key>", string(key))
-}
-
-// FormatSecret formats an encrypted secret with XML-like tags for sharing
-func FormatSecret(secret []byte) string {
-	return fmt.Sprintf("<secret_share_secret>%s</secret_share_secret>", string(secret))
-}

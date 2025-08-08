@@ -80,7 +80,7 @@ func handleReceiver() {
 
 	// Display public key for sharing
 	publicKeyStr := base64.StdEncoding.EncodeToString(publicKeyBytes)
-	publicKeyFormatted := tui.FormatPublicKey([]byte(publicKeyStr))
+	publicKeyFormatted := core.FormatPublicKey([]byte(publicKeyStr))
 	tui.PrintInfo("Here's a new the public key:")
 	tui.PrintMessage(publicKeyFormatted)
 
@@ -186,7 +186,7 @@ func handleSender() {
 
 	// Encode encrypted secret as base64
 	encryptedSecretStr := base64.StdEncoding.EncodeToString(encryptedSecret)
-	encryptedSecretFormatted := tui.FormatSecret([]byte(encryptedSecretStr))
+	encryptedSecretFormatted := core.FormatSecret([]byte(encryptedSecretStr))
 
 	// Display the encrypted secret for sharing
 	tui.PrintSuccess("Here's the secret encrypted so only they can decrypt it:")
