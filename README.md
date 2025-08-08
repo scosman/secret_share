@@ -1,3 +1,10 @@
+<p align="center">
+        <picture>
+            <img width="292" height="109" alt="SecretShare logo" src="https://github.com/user-attachments/assets/f66fec47-2e54-4f3c-aced-049c40881f2e" />
+        </picture>
+</p>
+
+
 # SecretShare
 
 Securely share secrets over untrusted communication channels using hybrid encryption (RSA-OAEP + AES-GCM).
