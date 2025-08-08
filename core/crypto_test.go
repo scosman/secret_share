@@ -250,7 +250,7 @@ func TestHybridDecryptNewerVersion(t *testing.T) {
 	}
 
 	// Check error message
-	expectedMsg := "this secret was sent using a newer version of SecureSend - please upgrade"
+	expectedMsg := "this secret was sent using a newer version of SecretShare - please upgrade"
 	if err.Error() != expectedMsg {
 		t.Errorf("Expected error message '%s', got '%s'", expectedMsg, err.Error())
 	}

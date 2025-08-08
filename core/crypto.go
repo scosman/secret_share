@@ -120,7 +120,7 @@ func HybridDecrypt(privateKey *rsa.PrivateKey, encryptedData []byte) ([]byte, er
 		encryptedData = encryptedData[4:]
 	} else if len(encryptedData) >= 3 && string(encryptedData[0:3]) == "ssv" {
 		// Recognizable format but newer version
-		return nil, fmt.Errorf("this secret was sent using a newer version of SecureSend - please upgrade")
+		return nil, fmt.Errorf("this secret was sent using a newer version of SecretShare - please upgrade")
 	} else {
 		// Invalid format
 		return nil, fmt.Errorf("invalid encrypted data format")
