@@ -95,7 +95,7 @@ func handleReceiver() {
 	for {
 		input := tui.PromptUser("Send the key above to the person who wants to share a secret with you. When they reply back with the encrypted secret, enter it here: ")
 		if tui.IsQuit(input) {
-			tui.PrintMessage("Shutting down SecretShare...")
+			tui.PrintMessage("Quiting SecretShare")
 			return
 		}
 
@@ -127,7 +127,7 @@ func handleSender() {
 	for {
 		input := tui.PromptUser("Enter the secret key from the other person. It should be a string wrapped in <secret_share_key> tags: ")
 		if tui.IsQuit(input) {
-			tui.PrintMessage("Shutting down SecretShare...")
+			tui.PrintMessage("Quiting SecretShare")
 			return
 		}
 
@@ -155,7 +155,7 @@ func handleSender() {
 	// Get secret to share
 	secret := tui.PromptSecret("Enter the secret you want to share: ")
 	if tui.IsQuit(secret) {
-		tui.PrintMessage("Shutting down SecretShare...")
+		tui.PrintMessage("Quiting SecretShare")
 		return
 	}
 
