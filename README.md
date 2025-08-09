@@ -37,7 +37,9 @@ The whole process takes about 15 seconds:
 8. Open source: build yourself or use public builds with checksums
 9. Tiny: read all the [crypto code](core/crypto.go) in about 1 minute or the whole app in about 5 minutes
 
-## Install/Build with Go
+## Install
+
+### Install/Build with Go
 
 If you have go installed just run:
 
@@ -53,7 +55,7 @@ For macOS and Linux, you can install SecretShare with a single command:
 curl -fsSL https://raw.githubusercontent.com/scosman/secret_share/main/install.sh | sh
 ```
 
-Feel free to download and read the installer script!
+Obviously feel free to download and read the installer script before running!
 
 ### Manual Download
 
