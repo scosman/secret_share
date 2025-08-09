@@ -4,9 +4,7 @@
         </picture>
 </p>
 
-# SecretShare
-
-### An easy and secure way to share secrets (like passwords, API keys, etc)
+### SecretShare: An easy and secure way to share secrets
 
 ## How it works
 
@@ -16,12 +14,13 @@ The whole process takes about 15 seconds:
 2. The sender runs secret_share, pastes in the public key from the receiver, types the secret, and gets an encrypted response they can send back
 3. The receiver pastes in the encrypted response and sees the secret
 
+![output_420](https://github.com/user-attachments/assets/0d2f2524-38a8-4455-9e65-23c7247d67f0)
 
 ## Overview
 
 ### It's Easy
 
-1. Run the app, send one message, done. 
+1. Run the app, send one message, paste the response, done. 
 2. Send the messages using your normal chat app: you don't need to trust the communication channel, they never see the private keys.
 3. No complicated security questions, just smart defaults
 4. Cross platform: available for Mac, Windows and Linux
@@ -30,12 +29,13 @@ The whole process takes about 15 seconds:
 
 1. Private key never leaves the senders device
 2. Private key is never written to a file or shown on screen, they are only kept in memory
-3. One time keys: fresh keys every sessions
+3. New random keys for every session
 4. No servers, no one to trust 
 5. Uses standard, strong, boring encryption: RSA-OAEP and AES-GCM 
 6. Uses golang's standard crypto package (formally audited)
 7. No dependencies except golang.org/x/term (Google maintained)
 8. Open source: build yourself or use public builds from Github Actions with checksums
+9. Tiny: read all the code in about 5 minutes
 
 ## Technical Details
 
