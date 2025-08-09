@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"secret_share/core"
-	"secret_share/tui"
 	"syscall"
+
+	"github.com/scosman/secret_share/core"
+	"github.com/scosman/secret_share/tui"
 )
 
 const TitleCard = `
