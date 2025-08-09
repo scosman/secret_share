@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -66,61 +68,15 @@ jobs:
         echo "=== End Checksums ==="
 
     - name: Upload release assets
-      uses: actions/upload-release-asset@v1
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          builds/secret_share-Windows-amd64.zip
+          builds/secret_share-Windows-arm64.zip
+          builds/secret_share-MacOS-Intel-x64.zip
+          builds/secret_share-MacOS-Apple-Silicon.zip
+          builds/secret_share-Linux-amd64.zip
+          builds/secret_share-Linux-arm64.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./builds/secret_share-Windows-amd64.zip
-        asset_name: secret_share-Windows-amd64.zip
-        asset_content_type: application/zip
-
-    - name: Upload release assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./builds/secret_share-Windows-arm64.zip
-        asset_name: secret_share-Windows-arm64.zip
-        asset_content_type: application/zip
-
-    - name: Upload release assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./builds/secret_share-MacOS-Intel-x64.zip
-        asset_name: secret_share-MacOS-Intel-x64.zip
-        asset_content_type: application/zip
-
-    - name: Upload release assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./builds/secret_share-MacOS-Apple-Silicon.zip
-        asset_name: secret_share-MacOS-Apple-Silicon.zip
-        asset_content_type: application/zip
-
-    - name: Upload release assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./builds/secret_share-Linux-amd64.zip
-        asset_name: secret_share-Linux-amd64.zip
-        asset_content_type: application/zip
-
-    - name: Upload release assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./builds/secret_share-Linux-arm64.zip
-        asset_name: secret_share-Linux-arm64.zip
-        asset_content_type: application/zip
