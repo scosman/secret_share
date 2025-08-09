@@ -10,9 +10,9 @@ import (
 	"fmt"
 )
 
-// GenerateKeyPair generates a new RSA key pair with 2048 bits
+// GenerateKeyPair generates a new RSA key pair with 3072 bits
 func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey, error) {
-	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	privateKey, err := rsa.GenerateKey(rand.Reader, 3072)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to generate RSA key pair: %w", err)
 	}
