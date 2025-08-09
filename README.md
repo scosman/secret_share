@@ -4,14 +4,14 @@
         </picture>
 </p>
 
-### SecretShare: An easy and secure way to share secrets
+### SecretShare: Easy, secure one time secret sharing CLI
 
 ## How it works
 
 The whole process takes about 15 seconds:
 
-1. The receiver runs secret_share and it generates a one-time public key they can send to the sender
-2. The sender runs secret_share, pastes in the public key from the receiver, types the secret, and gets an encrypted response they can send back
+1. The receiver runs secret_share and it generates a one-time public key which send to the sender
+2. The sender runs secret_share, pastes in the public key from the receiver, types the secret, and gets an encrypted response they send back
 3. The receiver pastes in the encrypted response and sees the secret
 
 <img width="1669" height="694" alt="flow chart" src="https://github.com/user-attachments/assets/9a1f0b4f-915a-4bd4-80e3-14a27066f58e" />
@@ -33,9 +33,9 @@ The whole process takes about 15 seconds:
 4. No servers, no one to trust 
 5. Uses standard, strong, boring encryption: RSA-OAEP and AES-GCM 
 6. Uses golang's standard crypto package (audited)
-7. No dependencies except for offical Google go packages
+7. No dependencies except for offical Google go packages (sys & term)
 8. Open source: build yourself or use public builds with checksums
-9. Tiny: read all the [crypto code](core/crypto.go) in about 1 minute or the whole app in about 5 minutes.
+9. Tiny: read all the [crypto code](core/crypto.go) in about 1 minute or the whole app in about 5 minutes
 
 ## Install/Build with Go
 
