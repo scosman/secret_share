@@ -37,17 +37,31 @@ The whole process takes about 15 seconds:
 8. Open source: build yourself or use public builds with checksums
 9. Tiny: read all the [crypto code](core/crypto.go) in about 1 minute or the whole app in about 5 minutes.
 
-## Install
+## Install/Build with Go
+
+If you have go installed just run:
 
 ```bash
 go install github.com/scosman/secret_share/cmd/secret_share@latest
 ```
 
+### Mac/Linux Installer
+
+For macOS and Linux, you can install SecretShare with a single command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/scosman/secret_share/main/install.sh | sh
+```
+
+Feel free to download and read the installer script!
+
 ### Manual Download
 
-If you don't have golang installed, you can download the latest release from [GitHub releases](https://github.com/scosman/secret_share/releases). 
+You can download the latest release from [GitHub releases](https://github.com/scosman/secret_share/releases). 
 
-The build logs are public on [Github Actions](https://github.com/scosman/secret_share/actions/workflows/release.yml), which include checksums.
+### Build Integrity
+
+Builds are created on public [Github Actions](https://github.com/scosman/secret_share/actions/workflows/release.yml). The build logs include checksums you can validate.
 
 ## Technical Details
 
@@ -63,7 +77,7 @@ SecretShare is a golang command-line tool. They encryption flow works as follows
 
 The private key never leaves the receiver's machine and is never exposed to the communication channel.
 
-Using hybrid encryption allows us to share secrets of any length. RSA can only encrypt short data.
+Using hybrid RSA+AES encryption allows us to share secrets of any length. RSA alone can only encrypt short payloads.
 
 Security note: secret_send does nothing to verify the identity of the person you're sharing with. That's similar to tools that use secret links, but not as robust as something like PGP or Keybase. The tradeoff is ease of setup and complexity.
 
