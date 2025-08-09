@@ -14,7 +14,7 @@ The whole process takes about 15 seconds:
 2. The sender runs secret_share, pastes in the public key from the receiver, types the secret, and gets an encrypted response they can send back
 3. The receiver pastes in the encrypted response and sees the secret
 
-![screen cast](https://github.com/user-attachments/assets/0d2f2524-38a8-4455-9e65-23c7247d67f0)
+<img width="1669" height="694" alt="secret_send flow" src="https://github.com/user-attachments/assets/20c3c887-9269-4737-9996-7ad1b49a94f5" />
 
 ## Overview
 
@@ -66,6 +66,10 @@ The private key never leaves the receiver's machine and is never exposed to the 
 Using hybrid encryption allows us to share secrets of any length. RSA can only encrypt short data.
 
 Security note: secret_send does nothing to verify the identity of the person you're sharing with.
+
+## Demo GIF
+
+![screen cast](https://github.com/user-attachments/assets/0d2f2524-38a8-4455-9e65-23c7247d67f0)
 
 ## Usability
 
