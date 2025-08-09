@@ -35,7 +35,7 @@ The whole process takes about 15 seconds:
 6. Uses golang's standard crypto package (audited)
 7. No dependencies except for offical Google go packages
 8. Open source: build yourself or use public builds with checksums
-9. Tiny: read all the code in about 5 minutes.
+9. Tiny: read all the [crypto code](core/crypto.go) in about 1 minute or the whole app in about 5 minutes.
 
 ## Install
 
@@ -67,17 +67,17 @@ Using hybrid encryption allows us to share secrets of any length. RSA can only e
 
 Security note: secret_send does nothing to verify the identity of the person you're sharing with. That's similar to tools that use secret links, but not as robust as something like PGP or Keybase. The tradeoff is ease of setup and complexity.
 
-## Demo GIF
-
-![screen cast](https://github.com/user-attachments/assets/0d2f2524-38a8-4455-9e65-23c7247d67f0)
-
 ## Usability
 
  - User friendly TUI: clear questions, instructions and errors
  - Clipboard support: it automatically copies the keys/encrypted-secret to clipboard at the appropriate time (MacOS and Linux)
  - Flexible parsing: don't sweat it if you paste a few extra characters
- - No args: interactive terminal UI, no need to memorize args
+ - No args: interactive terminal UI walks you through steps, no need to memorize args
  - No options/settings
+
+## Demo GIF
+
+![screen cast](https://github.com/user-attachments/assets/0d2f2524-38a8-4455-9e65-23c7247d67f0)
 
 ## License
 
