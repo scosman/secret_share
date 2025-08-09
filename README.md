@@ -14,7 +14,7 @@ The whole process takes about 15 seconds:
 2. The sender runs secret_share, pastes in the public key from the receiver, types the secret, and gets an encrypted response they can send back
 3. The receiver pastes in the encrypted response and sees the secret
 
-<img width="1669" height="694" alt="secret-2" src="https://github.com/user-attachments/assets/40ea425c-518b-41ca-b393-fc5b313a37e7" />
+<img width="1669" height="694" alt="flow chart" src="https://github.com/user-attachments/assets/9a1f0b4f-915a-4bd4-80e3-14a27066f58e" />
 
 ## Overview
 
