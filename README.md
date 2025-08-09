@@ -6,6 +6,14 @@
 
 ### SecretShare: Easy, secure one time secret sharing CLI
 
+- [How it works](#how-it-works)
+- [Overview: Security and Ease of Use](#overview)
+- [Install](#install)
+- [Technical Details](#technical-details)
+- [Usability](#usability)
+- [Demo](#demo-gif)
+- [License](#license)
+
 ## How it works
 
 The whole process takes about 15 seconds:
