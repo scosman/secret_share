@@ -14,14 +14,14 @@ The whole process takes about 15 seconds:
 2. The sender runs secret_share, pastes in the public key from the receiver, types the secret, and gets an encrypted response they can send back
 3. The receiver pastes in the encrypted response and sees the secret
 
-<img width="1669" height="694" alt="secret_send flow" src="https://github.com/user-attachments/assets/20c3c887-9269-4737-9996-7ad1b49a94f5" />
+<img width="1669" height="694" alt="secret-2" src="https://github.com/user-attachments/assets/40ea425c-518b-41ca-b393-fc5b313a37e7" />
 
 ## Overview
 
 ### It's Easy
 
 1. Run the app, send one message, paste the response, done. 
-2. Send the messages using any chat app: you don't need to trust the communication channel since never see the private keys.
+2. Send the messages using any chat app: you don't need to trust the communication channel since it never sees the private key.
 3. No complicated security questions, just smart defaults
 4. Cross platform: available for Mac, Windows and Linux
 
@@ -65,7 +65,7 @@ The private key never leaves the receiver's machine and is never exposed to the 
 
 Using hybrid encryption allows us to share secrets of any length. RSA can only encrypt short data.
 
-Security note: secret_send does nothing to verify the identity of the person you're sharing with.
+Security note: secret_send does nothing to verify the identity of the person you're sharing with. That's similar to tools that use secret links, but not as robust as something like PGP or Keybase. The tradeoff is ease of setup and complexity.
 
 ## Demo GIF
 
