@@ -14,14 +14,14 @@ The whole process takes about 15 seconds:
 2. The sender runs secret_share, pastes in the public key from the receiver, types the secret, and gets an encrypted response they can send back
 3. The receiver pastes in the encrypted response and sees the secret
 
-![output_420](https://github.com/user-attachments/assets/0d2f2524-38a8-4455-9e65-23c7247d67f0)
+![screen cast](https://github.com/user-attachments/assets/0d2f2524-38a8-4455-9e65-23c7247d67f0)
 
 ## Overview
 
 ### It's Easy
 
 1. Run the app, send one message, paste the response, done. 
-2. Send the messages using your normal chat app: you don't need to trust the communication channel, they never see the private keys.
+2. Send the messages using any chat app: you don't need to trust the communication channel since never see the private keys.
 3. No complicated security questions, just smart defaults
 4. Cross platform: available for Mac, Windows and Linux
 
@@ -32,10 +32,22 @@ The whole process takes about 15 seconds:
 3. New random keys for every session
 4. No servers, no one to trust 
 5. Uses standard, strong, boring encryption: RSA-OAEP and AES-GCM 
-6. Uses golang's standard crypto package (formally audited)
-7. No dependencies except golang.org/x/term (Google maintained)
-8. Open source: build yourself or use public builds from Github Actions with checksums
-9. Tiny: read all the code in about 5 minutes
+6. Uses golang's standard crypto package (audited)
+7. No dependencies except for offical Google go packages
+8. Open source: build yourself or use public builds with checksums
+9. Tiny: read all the code in about 5 minutes.
+
+## Install
+
+```bash
+go install github.com/scosman/secret_share/cmd/secret_share@latest
+```
+
+### Manual Download
+
+If you don't have golang installed, you can download the latest release from [GitHub releases](https://github.com/scosman/secret_share/releases). 
+
+The build logs are public on [Github Actions](https://github.com/scosman/secret_share/actions/workflows/release.yml), which include checksums.
 
 ## Technical Details
 
@@ -53,6 +65,8 @@ The private key never leaves the receiver's machine and is never exposed to the 
 
 Using hybrid encryption allows us to share secrets of any length. RSA can only encrypt short data.
 
+Security note: secret_send does nothing to verify the identity of the person you're sharing with.
+
 ## Usability
 
  - User friendly TUI: clear questions, instructions and errors
@@ -61,33 +75,6 @@ Using hybrid encryption allows us to share secrets of any length. RSA can only e
  - No args: interactive terminal UI, no need to memorize args
  - No options/settings
 
-## Download
-
-You can download the latest release from [GitHub releases](https://github.com/scosman/secret_share/releases). 
-
-The build logs are public on [Github Actions](https://github.com/scosman/secret_share/actions/workflows/release.yml), which include checksums.
-
-## Build it Yourself
-
-1. Ensure you have Go installed (version 1.21 or later)
-2. Clone this repository:
-   ```bash
-   git clone git@github.com:scosman/secret_share.git
-   cd secret_share
-   ```
-3. Build the application:
-   ```bash
-   go build -o secret_share cmd/secret_share/main.go
-   ```
-4. (Optional) Add the binary to your PATH:
-   ```bash
-   sudo cp secret_share /usr/local/bin/
-   ```
-5. Run the app
-   ```bash
-   ./secret_share
-   ```
-
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE.txt file for details.
