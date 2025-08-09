@@ -126,7 +126,7 @@ func handleSender() {
 	// Get receiver's public key with retry logic
 	var receiverPublicKey *rsa.PublicKey
 	for {
-		input := tui.PromptUser("Enter the secret key from the other person. It should be a string wrapped in <secret_share_key> tags: ")
+		input := tui.PromptUser("Enter the key sent from the person waiting to receive a secret. It should be a string wrapped in <secret_share_key> tags: ")
 		if tui.IsQuit(input) {
 			tui.PrintMessage("Quiting SecretShare")
 			return
@@ -134,6 +134,18 @@ func handleSender() {
 
 		// Extract public key from tags
 		publicKeyStr := tui.ExtractPublicKey(input)
+
+		// Check version prefix.
+		if len(publicKeyStr) >= 4 {
+			if publicKeyStr[0:4] == "ssv1" {
+				// Version prefix supported, strip it
+				publicKeyStr = publicKeyStr[4:]
+			} else if publicKeyStr[0:3] == "ssv" {
+				// Present but it has an unsupported version. The user needs to upgrade.
+				tui.PrintError("You need to upgrade SecretSend. This version is too old to handle this key.")
+				os.Exit(0)
+			}
+		}
 		// Decode base64 public key
 		publicKeyBytes, err := base64.StdEncoding.DecodeString(publicKeyStr)
 		// Parse public key
