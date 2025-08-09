@@ -61,7 +61,13 @@ Using hybrid encryption allows us to share secrets of any length. RSA can only e
  - No args: interactive terminal UI, no need to memorize args
  - No options/settings
 
-## Installation
+## Download
+
+You can download the latest release from [GitHub releases](https://github.com/scosman/secret_share/releases). 
+
+The build logs are public on [Github Actions](https://github.com/scosman/secret_share/actions/workflows/release.yml), which include checksums.
+
+## Build it Yourself
 
 1. Ensure you have Go installed (version 1.21 or later)
 2. Clone this repository:
