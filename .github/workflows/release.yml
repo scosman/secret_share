@@ -1,0 +1,126 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.23.5'
+
+    - name: Verify dependencies
+      run: go mod verify
+
+    - name: Build for all platforms
+      run: |
+        # Create a directory for our builds
+        mkdir -p builds
+        
+        # Define platforms to build for
+        declare -A platforms=(
+          ["windows-amd64"]="Windows-amd64"
+          ["windows-arm64"]="Windows-arm64"
+          ["darwin-amd64"]="MacOS-Intel-x64"
+          ["darwin-arm64"]="MacOS-Apple-Silicon"
+          ["linux-amd64"]="Linux-amd64"
+          ["linux-arm64"]="Linux-arm64"
+        )
+        
+        # Build for each platform
+        for platform in "${!platforms[@]}"; do
+          os=$(echo $platform | cut -d'-' -f1)
+          arch=$(echo $platform | cut -d'-' -f2)
+          friendly_name=${platforms[$platform]}
+          
+          echo "Building for $os/$arch ($friendly_name)"
+          
+          # Set binary name based on OS
+          binary_name="secret_share"
+          if [ "$os" = "windows" ]; then
+            binary_name="secret_share.exe"
+          fi
+          
+          # Cross-compile
+          GOOS=$os GOARCH=$arch go build -o "builds/$binary_name" cmd/secret_share/main.go
+          
+        # Create zip file
+        (cd builds && zip "secret_share-$friendly_name.zip" "$binary_name")
+        done
+
+    - name: Generate and print checksums
+      run: |
+        echo "=== Checksums ==="
+        for file in builds/*.zip; do
+          if [ -f "$file" ]; then
+            echo "$(sha256sum "$file" | cut -d' ' -f1)  $(basename "$file")"
+          fi
+        done
+        echo "=== End Checksums ==="
+
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./builds/secret_share-Windows-amd64.zip
+        asset_name: secret_share-Windows-amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./builds/secret_share-Windows-arm64.zip
+        asset_name: secret_share-Windows-arm64.zip
+        asset_content_type: application/zip
+
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./builds/secret_share-MacOS-Intel-x64.zip
+        asset_name: secret_share-MacOS-Intel-x64.zip
+        asset_content_type: application/zip
+
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./builds/secret_share-MacOS-Apple-Silicon.zip
+        asset_name: secret_share-MacOS-Apple-Silicon.zip
+        asset_content_type: application/zip
+
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./builds/secret_share-Linux-amd64.zip
+        asset_name: secret_share-Linux-amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./builds/secret_share-Linux-arm64.zip
+        asset_name: secret_share-Linux-arm64.zip
+        asset_content_type: application/zip
