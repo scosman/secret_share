@@ -65,12 +65,15 @@ func getUserRole() string {
 }
 
 func handleReceiver() {
+	fmt.Print("\nGenerating key...")
 	// Create a new receiver session
 	session, err := core.NewReceiverSession()
 	if err != nil {
 		tui.PrintError(fmt.Sprintf("Failed to create receiver session: %v", err))
 		return
 	}
+	// Clear the generating message, and go back up a line
+	fmt.Print("\r                  \r\033[F")
 
 	// Get public key bytes
 	publicKeyBytes, err := core.PublicKeyToBytes(session.GetPublicKey())
