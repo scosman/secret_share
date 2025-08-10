@@ -85,7 +85,7 @@ func handleReceiver() {
 	// Display public key for sharing
 	publicKeyStr := base64.StdEncoding.EncodeToString(publicKeyBytes)
 	publicKeyFormatted := core.FormatPublicKey([]byte(publicKeyStr))
-	tui.PrintInfo("Here's a new the public key:")
+	tui.PrintInfo("Here's a new public key:")
 	tui.PrintMessage(publicKeyFormatted)
 
 	// Try to copy public key to clipboard
