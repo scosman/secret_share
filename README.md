@@ -18,12 +18,11 @@
 
 The whole process takes about 15 seconds:
 
-1. The receiver runs secret_share and it generates a one-time public key which send to the sender
-2. The sender runs secret_share, pastes in the public key from the receiver, types the secret, and gets an encrypted response they send back
+1. The receiver runs secret_share, it generates a one-time public key, they send the key to the sender
+2. The sender runs secret_share, pastes in the public key from the receiver, type/paste a secret, it generates an encrypted response they send back
 3. The receiver pastes in the encrypted response and sees the secret
 
 <img width="1669" height="694" alt="flow chart" src="https://github.com/user-attachments/assets/7ddef55c-65fd-4994-b476-ed09f7055596" />
-
 
 ## Overview
 
@@ -90,15 +89,18 @@ The private key never leaves the receiver's machine and is never exposed to the 
 
 Using hybrid RSA+AES encryption allows us to share secrets of any length. RSA alone can only encrypt short payloads.
 
-Security note: secret_send does nothing to verify the identity of the person you're sharing with. That's similar to tools that use secret links, but not as robust as something like PGP or Keybase. The tradeoff is ease of setup and complexity.
+Security note: secret_send does nothing to verify the identity of the person you're sharing with. That is similar to tools which use secret links, but not as robust as something like PGP or Keybase. The tradeoff is ease of setup and complexity.
+
+Being an interactive CLI and not having arguments is an intentional security+usability choice. Other tools like [age](https://github.com/FiloSottile/age) allow you to generate private key files, but also make it the user's responsibility to securely manage those keys (keeping track of them, deleting them, time-based expiration, etc). SecretSend keeps it simple: no one ever sees the private key, it's never written to disk, and it's cleared from memory as soon as the app ends. This makes it great for one-time secret sharing between people. If you want long-term secret management with long lived keys, check out [age](https://github.com/FiloSottile/age).
 
 ## Usability
 
- - User friendly TUI: clear questions, instructions and errors
- - Clipboard support: it automatically copies the keys/encrypted-secret to clipboard at the appropriate time (MacOS and Linux)
+ - User friendly TUI: clear questions, instructions, and errors
+ - Clipboard support: it automatically copies the keys/encrypted-secret to clipboard at the appropriate time
  - Flexible parsing: don't sweat it if you paste a few extra characters
- - No args: interactive terminal UI walks you through steps, no need to memorize args
- - No options/settings
+ - No args: interactive terminal UI walks you through steps, no need to memorize args, no multi-step processes
+ - No options/settings: just secure defaults
+ - User isn't responsible for security: we don't show them the private key, there's no key files to delete, we don't ask them to choose key-length or algorithms.
 
 ## Demo GIF
 
