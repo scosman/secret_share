@@ -14,7 +14,9 @@ func SetClipboard(text string) error {
 		return setClipboardMacOS(text)
 	case "linux": // Linux
 		return setClipboardLinux(text)
-	default: // Windows and other platforms
+	case "windows": // Windows
+		return setClipboardWindows(text)
+	default: // other platforms
 		return exec.ErrNotFound
 	}
 }
@@ -29,6 +31,14 @@ func setClipboardMacOS(text string) error {
 // setClipboardLinux copies text to clipboard on Linux using xclip
 func setClipboardLinux(text string) error {
 	cmd := exec.Command("xclip", "-selection", "clipboard")
+	cmd.Stdin = strings.NewReader(text)
+	return cmd.Run()
+}
+
+// setClipboardWindows copies text to the Windows clipboard using clip.exe
+func setClipboardWindows(text string) error {
+	// If we ever have non-ascii should encode UTF-16, but we're base64 so no need
+	cmd := exec.Command("cmd", "/c", "clip")
 	cmd.Stdin = strings.NewReader(text)
 	return cmd.Run()
 }

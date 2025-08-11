@@ -43,7 +43,21 @@ func TestSetClipboard(t *testing.T) {
 				t.Errorf("Unexpected error on Linux: %v", err)
 			}
 		}
-	default: // Windows and other platforms
+	case "windows": // Windows
+		// check if clip exists
+		_, lookErr := exec.LookPath("clip")
+		if lookErr != nil {
+			// If clip doesn't exist, SetClipboard should return an error
+			if err == nil {
+				t.Error("Expected error on Windows when clip is not available, but got nil")
+			}
+		} else {
+			// If clip exists, SetClipboard should not return an error
+			if err != nil {
+				t.Errorf("Unexpected error on Linux: %v", err)
+			}
+		}
+	default: // other platforms
 		// On unsupported platforms, SetClipboard should always return an error
 		if err == nil {
 			t.Error("Expected error on unsupported platforms, but got nil")
