@@ -55,7 +55,7 @@ You can install SecretShare with a single command:
 curl -fsSL https://raw.githubusercontent.com/scosman/secret_share/main/install.sh | sh
 ```
 
-**Important: ** Windows users should run this in Windows Subsystem for Linux (WSL), not PowerShell.
+**Important:** Windows users should run this in Windows Subsystem for Linux (WSL), not PowerShell.
 
 Obviously feel free to download and read the installer script before running!
 
