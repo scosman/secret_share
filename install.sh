@@ -26,8 +26,8 @@ print_info() {
 
 # Detect platform and architecture
 detect_platform() {
-    # Check if we're on Windows (any Windows environment)
-    if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ -n "$WINDIR" ]]; then
+    # Check if we're on WSL (Windows Subsystem for Linux)
+    if [[ -n "$WSL_DISTRO_NAME" ]] || [[ "$(uname -r)" == *microsoft* ]] || [[ "$(uname -r)" == *WSL* ]]; then
         OS="windows"
         ARCH=$(uname -m 2>/dev/null || echo "x86_64")
         BINARY_NAME="secret_share.exe"
@@ -141,67 +141,32 @@ install_binary() {
     fi
     
     # Determine installation directory
-    if [ "$OS" = "windows" ]; then
-        # On Windows, use the standard user programs directory
-        # %LOCALAPPDATA%\Programs is the Windows standard for user-installed programs
-        LOCALAPPDATA="${LOCALAPPDATA:-$HOME/AppData/Local}"
-        INSTALL_DIR="$LOCALAPPDATA/Programs"
-        mkdir -p "$INSTALL_DIR"
-        
-        # Convert to Windows path format for display
-        WIN_INSTALL_DIR=$(cygpath -w "$INSTALL_DIR" 2>/dev/null || echo "$INSTALL_DIR")
+    # Try /usr/local/bin first (Unix-like systems including WSL)
+    if [ -w "/usr/local/bin" ]; then
+        INSTALL_DIR="/usr/local/bin"
     else
-        # Unix-like systems (Linux, macOS)
-        # Try /usr/local/bin first
-        if [ -w "/usr/local/bin" ]; then
-            INSTALL_DIR="/usr/local/bin"
-        else
-            # Fallback to ~/.local/bin
-            INSTALL_DIR="$HOME/.local/bin"
-            mkdir -p "$INSTALL_DIR"
-        fi
+        # Fallback to ~/.local/bin
+        INSTALL_DIR="$HOME/.local/bin"
+        mkdir -p "$INSTALL_DIR"
     fi
     
     # Move binary to installation directory
     print_info "Installing SecretShare to $INSTALL_DIR..."
     mv "$BINARY_NAME" "$INSTALL_DIR/"
     
-    # Make binary executable (not needed on Windows)
-    if [ "$OS" != "windows" ]; then
-        chmod +x "$INSTALL_DIR/$BINARY_NAME"
-    fi
+    # Make binary executable (works on all Unix-like systems including WSL)
+    chmod +x "$INSTALL_DIR/$BINARY_NAME"
     
     # Clean up
     rm -rf "$TEMP_DIR"
     
     print_success "SecretShare installed successfully to $INSTALL_DIR/$BINARY_NAME"
     
-    # Provide platform-specific instructions
-    if [ "$OS" = "windows" ]; then
-        echo "SecretShare has been installed to the standard Windows user programs directory."
-        echo ""
-        echo "Option 1 - Run from programs directory (no setup required):"
-        echo "  cd \"${WIN_INSTALL_DIR:-$INSTALL_DIR}\""
-        echo "  .\\secret_share.exe"
-        echo ""
-        echo "Option 2 - Add to PATH for global access (PowerShell):"
-        echo "  1. Open PowerShell and run:"
-        echo "     \$env:PATH += \";${WIN_INSTALL_DIR:-$INSTALL_DIR}\""
-        echo "     [Environment]::SetEnvironmentVariable(\"PATH\", \$env:PATH, \"User\")"
-        echo "  2. Close and reopen PowerShell/Command Prompt/Windows Terminal"
-        echo ""
-        echo "Option 3 - Add to PATH via System Properties GUI:"
-        echo "  1. Press Win+X → System → Advanced system settings"
-        echo "  2. Click 'Environment Variables'"
-        echo "  3. Under 'User variables', edit 'Path'"
-        echo "  4. Add: ${WIN_INSTALL_DIR:-$INSTALL_DIR}"
-        echo "  5. Close and reopen your shell (PowerShell/CMD/Windows Terminal)"
-    else
-        echo "You can now run 'secret_share' from your terminal."
-        echo "If the command is not found you may need to add it to your PATH:"
-        echo "  echo 'export PATH=\$PATH:\$HOME/.local/bin' >> ~/.bashrc"
-        echo "  source ~/.bashrc"
-    fi
+    # Provide installation instructions
+    echo "You can now run 'secret_share' from your terminal."
+    echo "If the command is not found you may need to add it to your PATH:"
+    echo "  echo 'export PATH=\$PATH:\$HOME/.local/bin' >> ~/.bashrc"
+    echo "  source ~/.bashrc"
 }
 
 # Main execution
