@@ -26,8 +26,16 @@ print_info() {
 
 # Detect platform and architecture
 detect_platform() {
-    OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-    ARCH=$(uname -m)
+    # Check if we're on WSL (Windows Subsystem for Linux)
+    if [[ -n "$WSL_DISTRO_NAME" ]] || [[ "$(uname -r)" == *microsoft* ]] || [[ "$(uname -r)" == *WSL* ]]; then
+        OS="windows"
+        ARCH=$(uname -m 2>/dev/null || echo "x86_64")
+        BINARY_NAME="secret_share.exe"
+    else
+        OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+        ARCH=$(uname -m)
+        BINARY_NAME="secret_share"
+    fi
     
     # Normalize architecture names
     case $ARCH in
@@ -47,11 +55,12 @@ detect_platform() {
     case $OS in
         linux)
             OS="linux"
-            BINARY_NAME="secret_share"
             ;;
         darwin)
             OS="darwin"
-            BINARY_NAME="secret_share"
+            ;;
+        windows)
+            OS="windows"
             ;;
         *)
             print_error "Unsupported operating system: $OS"
@@ -61,7 +70,7 @@ detect_platform() {
     
     PLATFORM="${OS}-${ARCH}"
     
-    # Map platform to release file name
+    # Map platform to release file name (must match release.yml)
     case $PLATFORM in
         linux-amd64)
             RELEASE_NAME="Linux-amd64"
@@ -74,6 +83,12 @@ detect_platform() {
             ;;
         darwin-arm64)
             RELEASE_NAME="MacOS-Apple-Silicon"
+            ;;
+        windows-amd64)
+            RELEASE_NAME="Windows-amd64"
+            ;;
+        windows-arm64)
+            RELEASE_NAME="Windows-arm64"
             ;;
         *)
             print_error "Unsupported platform: $PLATFORM"
@@ -126,30 +141,30 @@ install_binary() {
     fi
     
     # Determine installation directory
-    if [ "$OS" = "darwin" ] || [ "$OS" = "linux" ]; then
-        # Try /usr/local/bin first
-        if [ -w "/usr/local/bin" ]; then
-            INSTALL_DIR="/usr/local/bin"
-        else
-            # Fallback to ~/.local/bin
-            INSTALL_DIR="$HOME/.local/bin"
-            mkdir -p "$INSTALL_DIR"
-        fi
+    # Try /usr/local/bin first (Unix-like systems including WSL)
+    if [ -w "/usr/local/bin" ]; then
+        INSTALL_DIR="/usr/local/bin"
+    else
+        # Fallback to ~/.local/bin
+        INSTALL_DIR="$HOME/.local/bin"
+        mkdir -p "$INSTALL_DIR"
     fi
     
     # Move binary to installation directory
     print_info "Installing SecretShare to $INSTALL_DIR..."
     mv "$BINARY_NAME" "$INSTALL_DIR/"
     
-    # Make binary executable
+    # Make binary executable (works on all Unix-like systems including WSL)
     chmod +x "$INSTALL_DIR/$BINARY_NAME"
     
     # Clean up
     rm -rf "$TEMP_DIR"
     
     print_success "SecretShare installed successfully to $INSTALL_DIR/$BINARY_NAME"
+    
+    # Provide installation instructions
     echo "You can now run 'secret_share' from your terminal."
-    echo "If you installed to ~/.local/bin, you may need to add it to your PATH:"
+    echo "If the command is not found you may need to add it to your PATH:"
     echo "  echo 'export PATH=\$PATH:\$HOME/.local/bin' >> ~/.bashrc"
     echo "  source ~/.bashrc"
 }

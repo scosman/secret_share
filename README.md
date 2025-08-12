@@ -47,27 +47,31 @@ The whole process takes about 15 seconds:
 
 ## Install
 
-### Install/Build with Go
+### Automatic Installer
 
-If you have go installed just run:
-
-```bash
-go install github.com/scosman/secret_share/cmd/secret_share@latest
-```
-
-### Mac/Linux Installer
-
-For macOS and Linux, you can install SecretShare with a single command:
+You can install SecretShare with a single command:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/scosman/secret_share/main/install.sh | sh
 ```
 
+**Important: ** Windows users should run this in Windows Subsystem for Linux (WSL), not PowerShell.
+
 Obviously feel free to download and read the installer script before running!
+
+### Install from Source
+
+Run the following to install secret_share from source. You'll need to have [golang installed](https://go.dev/doc/install).
+
+```bash
+go install github.com/scosman/secret_share/cmd/secret_share@latest
+```
 
 ### Manual Download
 
 You can download the latest release from [GitHub releases](https://github.com/scosman/secret_share/releases). 
+
+You may need to wrestle with you system scanner (Windows Defender, macOS Gatekeeper) as the builds are not signed. Installing using on of the two methods above avoids this, so we recommend them.
 
 ### Build Integrity
 
