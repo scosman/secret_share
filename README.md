@@ -3,16 +3,17 @@
             <img width="323" height="167" alt="SecretShare logo" src="https://github.com/user-attachments/assets/1aa94780-92b5-4a90-9713-7abd172f4e1c" />
         </picture>
 </p>
-
-### SecretShare: Easy, secure one time secret sharing CLI
-
-- [How it works](#how-it-works)
-- [Overview: Security and Ease of Use](#overview)
-- [Install](#install)
-- [Technical Details](#technical-details)
-- [Usability](#usability)
-- [Demo](#demo-gif)
-- [License](#license)
+<h3 align="center">
+    Secure One Time Secret Sharing CLI
+</h3>
+<p align="center">
+  <a href="#how-it-works"><strong>How it Works</strong></a> •
+  <a href="#overview"><strong>Overview: Security and Use</strong></a> • 
+  <a href="#install"><strong>Install</strong></a> • 
+  <a href="#technical-details"><strong>Technical Details</strong></a> • 
+  <a href="#usability"><strong>Usability</strong></a> • 
+  <a href="#demo-gif"><strong>Demo</strong></a>
+</p>
 
 ### Quick Start: Install and Run
 
