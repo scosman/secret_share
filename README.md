@@ -1,6 +1,6 @@
 <p align="center">
         <picture>
-            <img width="292" height="109" alt="SecretShare logo" src="https://github.com/user-attachments/assets/f66fec47-2e54-4f3c-aced-049c40881f2e" />
+            <img width="323" height="167" alt="SecretShare logo" src="https://github.com/user-attachments/assets/1aa94780-92b5-4a90-9713-7abd172f4e1c" />
         </picture>
 </p>
 
@@ -14,12 +14,21 @@
 - [Demo](#demo-gif)
 - [License](#license)
 
+### Quick Start: Install and Run
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/scosman/secret_share/main/install.sh | sh
+secret_share
+```
+
+Or check out all [install options](#install).
+
 ## How it works
 
 The whole process takes about 15 seconds:
 
-1. The receiver runs secret_share, it generates a one-time public key, they send the key to the sender
-2. The sender runs secret_share, pastes in the public key from the receiver, type/paste a secret, it generates an encrypted response they send back
+1. The receiver runs `secret_share`, it generates a one-time public key, they send the key to the sender
+2. The sender runs `secret_share`, pastes in the public key from the receiver, type/paste a secret, it generates an encrypted response they send back
 3. The receiver pastes in the encrypted response and sees the secret
 
 <img width="1669" height="694" alt="flow chart" src="https://github.com/user-attachments/assets/7ddef55c-65fd-4994-b476-ed09f7055596" />
@@ -36,7 +45,7 @@ The whole process takes about 15 seconds:
 ### It's Secure
 
 1. Private key never leaves the senders device
-2. Private key is never written to a file or shown on screen, they are only kept in memory
+2. Private key is never written to a file or shown on screen, it is only kept in memory
 3. New random keys for every session
 4. No servers, no one to trust 
 5. Uses standard, strong, boring encryption: RSA-OAEP and AES-GCM 
@@ -57,7 +66,7 @@ curl -fsSL https://raw.githubusercontent.com/scosman/secret_share/main/install.s
 
 **Important:** Windows users should run this in Windows Subsystem for Linux (WSL), not PowerShell.
 
-Obviously feel free to download and read the installer script before running!
+Obviously feel free to download and read the installer script before running! It's downloading the latest offical release from Github.
 
 ### Install from Source
 
@@ -66,12 +75,6 @@ Run the following to install secret_share from source. You'll need to have [gola
 ```bash
 go install github.com/scosman/secret_share/cmd/secret_share@latest
 ```
-
-### Manual Download
-
-You can download the latest release from [GitHub releases](https://github.com/scosman/secret_share/releases). 
-
-You may need to wrestle with you system scanner (Windows Defender, macOS Gatekeeper) as the builds are not signed. Installing using on of the two methods above avoids this, so we recommend them.
 
 ### Build Integrity
 
