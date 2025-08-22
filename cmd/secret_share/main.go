@@ -26,7 +26,7 @@ const titleCard = `
   ╚════██║██╔══██║██╔══██║██╔══██╗██╔══╝  
   ███████║██║  ██║██║  ██║██║  ██║███████╗
   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
-
+ 
   Secure One Time Secret Sharing`
 
 func main() {
@@ -132,7 +132,7 @@ func handleReceiver() {
 	}
 
 	// Display the decrypted secret
-	tui.PrintSuccess(fmt.Sprintf("Here's your secret: %s", string(decryptedSecret)))
+	tui.PrintSuccess(fmt.Sprintf("Here's your secret 🤫: %s", string(decryptedSecret)))
 }
 
 func handleSender() {
