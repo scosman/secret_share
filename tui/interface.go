@@ -95,16 +95,18 @@ func readInputWithPasteDetection() string {
 			result.WriteByte('\n')
 			fmt.Println() // Echo the newline
 		} else if ch == 127 || ch == 8 { // Backspace or DEL
-			// Handle backspace
-			if result.Len() > 0 {
-				// Remove last character from result
-				str := result.String()
-				if len(str) > 0 {
+			// Handle backspace - remove last rune, not byte
+			str := result.String()
+			if len(str) > 0 {
+				// Convert to runes to properly handle multi-byte UTF-8 characters
+				runes := []rune(str)
+				if len(runes) > 0 {
+					// Remove last rune and rebuild string
 					result.Reset()
-					result.WriteString(str[:len(str)-1])
+					result.WriteString(string(runes[:len(runes)-1]))
+					// Echo backspace
+					fmt.Print("\b \b")
 				}
-				// Echo backspace
-				fmt.Print("\b \b")
 			}
 		} else if ch >= 32 || ch == '\t' { // Printable characters and tab
 			result.WriteByte(ch)
@@ -176,16 +178,18 @@ func readSecretWithPasteDetection() string {
 			result.WriteByte('\n')
 			fmt.Println() // Echo the newline (but don't show the actual character)
 		} else if ch == 127 || ch == 8 { // Backspace or DEL
-			// Handle backspace
-			if result.Len() > 0 {
-				// Remove last character from result
-				str := result.String()
-				if len(str) > 0 {
+			// Handle backspace - remove last rune, not byte
+			str := result.String()
+			if len(str) > 0 {
+				// Convert to runes to properly handle multi-byte UTF-8 characters
+				runes := []rune(str)
+				if len(runes) > 0 {
+					// Remove last rune and rebuild string
 					result.Reset()
-					result.WriteString(str[:len(str)-1])
+					result.WriteString(string(runes[:len(runes)-1]))
+					// Echo backspace
+					fmt.Print("\b \b")
 				}
-				// Echo backspace
-				fmt.Print("\b \b")
 			}
 		} else if ch >= 32 || ch == '\t' { // Printable characters and tab
 			result.WriteByte(ch)
