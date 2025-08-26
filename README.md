@@ -22,6 +22,8 @@ curl -fsSL https://raw.githubusercontent.com/scosman/secret_share/main/install.s
 secret_share
 ```
 
+**Windows Users**: run this in Windows Subsystem for Linux (WSL), not PowerShell.
+
 Or check out all [install options](#install).
 
 ## How it works
@@ -32,7 +34,7 @@ The whole process takes about 15 seconds:
 2. The sender runs `secret_share`, pastes in the public key from the receiver, type/paste a secret, it generates an encrypted response they send back
 3. The receiver pastes in the encrypted response and sees the secret
 
-<img width="1669" height="694" alt="flow chart" src="https://github.com/user-attachments/assets/7ddef55c-65fd-4994-b476-ed09f7055596" />
+<img width="1654" height="607" alt="flow chart" src="https://github.com/user-attachments/assets/3e2e51b6-2629-4ca0-8665-72424c2aab69" />
 
 ## Overview
 
