@@ -4,7 +4,7 @@
         </picture>
 </p>
 <h3 align="center">
-    Secure One Time Secret Sharing CLI
+    Share Secrets/Passwords Securely with with a CLI — in 15 Seconds
 </h3>
 <p align="center">
   <a href="#how-it-works"><strong>How it Works</strong></a> •
@@ -33,6 +33,8 @@ The whole process takes about 15 seconds:
 1. The receiver runs `secret_share`, it generates a one-time public key, they send the key to the sender
 2. The sender runs `secret_share`, pastes in the public key from the receiver, type/paste a secret, it generates an encrypted response they send back
 3. The receiver pastes in the encrypted response and sees the secret
+
+[[Demo GIF]](#demo-gif)
 
 <img width="1416" height="677" alt="asdf" src="https://github.com/user-attachments/assets/5825fce2-46c5-4598-b929-ac94d86fe176" />
 
