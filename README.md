@@ -36,7 +36,9 @@ The whole process takes about 15 seconds:
 
 [[Demo GIF]](#demo-gif)
 
-<img width="1416" height="677" alt="asdf" src="https://github.com/user-attachments/assets/5825fce2-46c5-4598-b929-ac94d86fe176" />
+<img width="1672" height="941" alt="secret_share explainer" src="https://github.com/user-attachments/assets/54fcfc3f-816a-4469-a064-2c438a273ad7" />
+
+
 
 ## Overview
 
